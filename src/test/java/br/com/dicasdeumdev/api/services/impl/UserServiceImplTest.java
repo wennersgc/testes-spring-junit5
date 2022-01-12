@@ -140,9 +140,19 @@ class UserServiceImplTest {
     void deveDeletarUmUsuarioComSucesso() {
         when(repository.findById(anyInt())).thenReturn(optionalUser);
         doNothing().when(repository).deleteById(anyInt());
-//        assertDoesNotThrow(() -> service.delete(ID));
         service.delete(ID);
         verify(repository, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void deveRetonarObjectNotFoundException_aoDeletarUsuarioInexistente() {
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException(OBJETO_NÃO_ENCONTRADO));
+
+        Exception exception = assertThrows(ObjectNotFoundException.class, () ->  service.delete(ID));
+
+        assertTrue(exception.getMessage().contains(OBJETO_NÃO_ENCONTRADO));
+        assertEquals(ObjectNotFoundException.class, exception.getClass());
+        verify(repository, times(0)).deleteById(anyInt());
     }
 
     private void verificaAtributos(User response) {
