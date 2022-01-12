@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -83,6 +84,18 @@ class UserServiceImplTest {
         assertEquals(User.class, response.get(INDEX).getClass());
 
         verificaAtributos(response.get(INDEX));
+    }
+
+    @Test
+    void deveCriarUmUsuarioComSucesso() {
+        when(repository.save(any())).thenReturn(user);
+
+        User response = service.create(userDTO);
+
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+
+        verificaAtributos(response);
     }
 
     private void verificaAtributos(User response) {
