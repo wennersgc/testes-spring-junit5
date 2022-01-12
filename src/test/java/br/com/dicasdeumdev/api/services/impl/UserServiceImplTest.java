@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +28,7 @@ class UserServiceImplTest {
     public static final String EMAIL = "wenner@gmail.com";
     public static final String PASSWORD = "123";
     public static final String OBJETO_NÃO_ENCONTRADO = "Objeto não encontrado";
+    public static final int INDEX = 0;
 
     @InjectMocks
     private UserServiceImpl service;
@@ -55,10 +57,8 @@ class UserServiceImplTest {
 
         assertNotNull(response);
         assertEquals(User.class, response.getClass());
-        assertEquals(ID, response.getId());
-        assertEquals(NAME, response.getName());
-        assertEquals(PASSWORD, response.getPassword());
-        assertEquals(EMAIL, response.getEmail());
+
+        verificaAtributos(response);
     }
 
     @Test
@@ -70,6 +70,26 @@ class UserServiceImplTest {
         assertThrows(ObjectNotFoundException.class, () -> repository.findById(ID));
         assertTrue(exception.getMessage().contains(OBJETO_NÃO_ENCONTRADO));
         assertEquals(ObjectNotFoundException.class, exception.getClass());
+    }
+
+    @Test
+    void deveRetornarUmaListadeUsuario_aoBuscarTodos() {
+        when(repository.findAll()).thenReturn(List.of(user));
+
+        List<User> response = service.findAll();
+
+        assertNotNull(response);
+        assertEquals( 1, response.size());
+        assertEquals(User.class, response.get(INDEX).getClass());
+
+        verificaAtributos(response.get(INDEX));
+    }
+
+    private void verificaAtributos(User response) {
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(PASSWORD, response.getPassword());
+        assertEquals(EMAIL, response.getEmail());
     }
 
     private void startUser() {
