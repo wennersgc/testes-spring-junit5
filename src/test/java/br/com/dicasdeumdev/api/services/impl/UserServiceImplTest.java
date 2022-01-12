@@ -114,6 +114,29 @@ class UserServiceImplTest {
         assertTrue(ex.getMessage().contains(E_MAIL_JÁ_CADASTRADO_NO_SISTEMA));
     }
 
+    @Test
+    void deveAtualizarUmUsuarioComSucesso() {
+        when(repository.save(any())).thenReturn(user);
+
+        User response = service.update(userDTO);
+
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+
+        verificaAtributos(response);
+    }
+
+    @Test
+    void deveLancarDataIntegrityViolationException_aoAtualizarUmUsuario() {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+        optionalUser.get().setId(2);
+
+        Exception ex = assertThrows(DataIntegratyViolationException.class, () -> service.update(userDTO));
+
+        assertEquals(DataIntegratyViolationException.class, ex.getClass());
+        assertTrue(ex.getMessage().contains(E_MAIL_JÁ_CADASTRADO_NO_SISTEMA));
+    }
+
     private void verificaAtributos(User response) {
         assertEquals(ID, response.getId());
         assertEquals(NAME, response.getName());
