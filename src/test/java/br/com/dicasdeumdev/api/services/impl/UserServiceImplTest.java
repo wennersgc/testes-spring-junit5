@@ -3,6 +3,7 @@ package br.com.dicasdeumdev.api.services.impl;
 import br.com.dicasdeumdev.api.domain.User;
 import br.com.dicasdeumdev.api.domain.dto.UserDTO;
 import br.com.dicasdeumdev.api.repositories.UserRepository;
+import br.com.dicasdeumdev.api.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -58,6 +58,17 @@ class UserServiceImplTest {
         assertEquals(NAME, response.getName());
         assertEquals(PASSWORD, response.getPassword());
         assertEquals(EMAIL, response.getEmail());
+    }
+
+    @Test
+    void deveRetonarObjectNotFoundException_aoBuscarPorID_eUsuarioNaoExistir() {
+        when(repository.findById(ID)).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+
+        Exception exception = assertThrows(ObjectNotFoundException.class, () -> repository.findById(ID));
+
+        assertThrows(ObjectNotFoundException.class, () -> repository.findById(ID));
+        assertTrue(exception.getMessage().contains("Objeto não encontrado"));
+        assertEquals(ObjectNotFoundException.class, exception.getClass());
     }
 
     private void startUser() {
