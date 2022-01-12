@@ -22,8 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 class UserServiceImplTest {
@@ -135,6 +134,15 @@ class UserServiceImplTest {
 
         assertEquals(DataIntegratyViolationException.class, ex.getClass());
         assertTrue(ex.getMessage().contains(E_MAIL_JÁ_CADASTRADO_NO_SISTEMA));
+    }
+
+    @Test
+    void deveDeletarUmUsuarioComSucesso() {
+        when(repository.findById(anyInt())).thenReturn(optionalUser);
+        doNothing().when(repository).deleteById(anyInt());
+//        assertDoesNotThrow(() -> service.delete(ID));
+        service.delete(ID);
+        verify(repository, times(1)).deleteById(anyInt());
     }
 
     private void verificaAtributos(User response) {
