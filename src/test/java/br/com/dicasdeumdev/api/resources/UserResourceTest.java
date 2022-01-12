@@ -13,7 +13,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +42,16 @@ class UserResourceTest {
     @Mock
     private UserService service;
 
+    @Mock
+    private HttpServletRequest attributes;
+
     private UserDTO userDTO;
     private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(attributes));
         startUser();
     }
 
@@ -80,7 +88,15 @@ class UserResourceTest {
     }
 
     @Test
-    void create() {
+    void deveCriarUmUsuarioComSucesso() {
+        when(service.create(any())).thenReturn(user);
+
+        ResponseEntity<UserDTO> response = resource.create(userDTO);
+
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getHeaders().get("Location"));
+
     }
 
     @Test
