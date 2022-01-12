@@ -26,6 +26,7 @@ class UserServiceImplTest {
     public static final String NAME = "wenner";
     public static final String EMAIL = "wenner@gmail.com";
     public static final String PASSWORD = "123";
+    public static final String OBJETO_NÃO_ENCONTRADO = "Objeto não encontrado";
 
     @InjectMocks
     private UserServiceImpl service;
@@ -62,12 +63,12 @@ class UserServiceImplTest {
 
     @Test
     void deveRetonarObjectNotFoundException_aoBuscarPorID_eUsuarioNaoExistir() {
-        when(repository.findById(ID)).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+        when(repository.findById(ID)).thenThrow(new ObjectNotFoundException(OBJETO_NÃO_ENCONTRADO));
 
         Exception exception = assertThrows(ObjectNotFoundException.class, () -> repository.findById(ID));
 
         assertThrows(ObjectNotFoundException.class, () -> repository.findById(ID));
-        assertTrue(exception.getMessage().contains("Objeto não encontrado"));
+        assertTrue(exception.getMessage().contains(OBJETO_NÃO_ENCONTRADO));
         assertEquals(ObjectNotFoundException.class, exception.getClass());
     }
 
