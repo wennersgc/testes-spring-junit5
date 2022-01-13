@@ -45,8 +45,8 @@ class UserResourceTest {
     @Mock
     private HttpServletRequest attributes;
 
-    private UserDTO userDTO;
-    private User user;
+    private UserDTO userDTO = new UserDTO();
+    private User user =  new User();
 
     @BeforeEach
     void setUp() {
